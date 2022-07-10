@@ -1,0 +1,94 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>number-baseball</title>
+</head>
+<body>
+  <form id="form">
+    <input id="input" type = "text"/>
+    <button id="button">확인</button>
+  </form>
+
+  <div id="logs"></div>
+
+  <script>
+    const $form = document.querySelector('#form');
+    const $input = document.querySelector('#input');
+    const $logs = document.querySelector('#logs');
+
+    const container = [];
+    const goal = [];
+    const tries = [];
+
+    for(let i = 0 ; i < 9 ; i++) {
+      container.push(i+1);
+    }
+
+    for(let i = 0 ; i < 4 ; i++) {
+      let idx = Math.floor(Math.random() * container.length);
+      goal.push( container[idx] );
+      container.splice(idx, 1);
+    }
+    
+    function checkInput(value) {
+      if (value.length != 4) {
+        alert('4자리수를 입력하십시오.');
+        return false;
+      }
+      else if (new Set(value).size != 4) {
+        alert('숫자가 중복되었습니다.')
+        return false;
+      }
+      else if (tries.includes(value)) {
+        alert('입력했던 숫자입니다.')
+        return false;
+      }
+      else {
+        return true;
+      }
+    }
+
+    $form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      let value = $input.value;
+      $input.value = ''; 
+      if(!checkInput(value)) {
+        return;
+      }
+
+      if (value === goal.join('')) {
+        $logs.textContent = '홈런!';
+        return;
+      }
+
+      if(tries.length >= 9) {
+        $logs.append(`패배! 정답은 ${goal.join('')}`);
+        return;
+      }
+      
+      
+      let strike = 0;
+      let ball = 0;
+
+      for(let i = 0 ; i < 4 ; i++) {
+        let index = value.indexOf(goal[i]);
+        if(index == -1) {
+          continue;
+        }
+
+        if(i == index) {
+          strike++;
+        }
+
+        else {
+          ball++;
+        }
+      }
+
+      $logs.append(`${$input.value}: ${strike} 스트라이크 ${ball} 볼`, document.createElement('br'));
+    })
+
+    console.log(goal);
+  </script>
+</body>
+</html>
