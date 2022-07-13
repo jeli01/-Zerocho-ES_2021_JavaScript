@@ -1,0 +1,97 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>my-rsp</title>
+  <style>
+    #computer {
+      width: 142px;
+      height: 200px;
+    }
+  </style>
+</head>
+<body>
+  <div id="computer"></div>
+  <div>
+    <button id="scissors" class="btn">가위</button>
+    <button id="rock" class="btn">바위</button>
+    <button id="paper" class="btn">보</button>
+  </div>
+  <div id="score">0</div>
+  <script>
+    const $computer = document.querySelector('#computer');
+    const $score = document.querySelector('#score');
+    const $rock = document.querySelector('#rock');
+    const $scissors = document.querySelector('#scissors');
+    const $paper = document.querySelector('#paper');
+    const IMG_URL = './rsp.png';
+    $computer.style.background = `url(${IMG_URL}) 0 0`;
+    $computer.style.backgroundSize = 'auto 200px';
+
+    rspX = {
+      scissors : '0px',
+      rock : '-220px',
+      paper : '-440px',
+    }
+
+    let computerRSP = 'scissors';
+    let rspScore = {
+      scissors : 1,
+      rock : 0,
+      paper : -1,
+    }
+    let myScore;
+    let comScore;
+    let score = 0;
+    function changeImage() {
+      if(computerRSP === 'scissors') {
+        computerRSP = 'rock';
+      } else if(computerRSP === 'rock') {
+        computerRSP = 'paper';
+      } else if(computerRSP === 'paper') {
+        computerRSP = 'scissors';
+      }
+      $computer.style.background = `url(${IMG_URL}) ${rspX[computerRSP]} 0`;
+        $computer.style.backgroundSize = 'auto 200px';
+    }
+
+    let intervalId = setInterval(changeImage, 50);
+    
+    let clickable = true;
+    function clickButton(event) {
+      if(clickable) {
+        clickable = false;
+        clearInterval(intervalId);
+        
+        myChoice = event.target.textContent === '가위' 
+          ? 'scissors' 
+          : event.target.textContent === '바위' 
+            ? 'rock' 
+            : 'paper';
+        myScore = rspScore[myChoice];
+        comScore = rspScore[computerRSP];
+        diff = myScore - comScore;
+
+        if([2,-1].includes(diff)) {
+          score += 1;
+          $score.textContent = `승리! 점수 : ${score}`;
+          
+        } else if ([1,-2].includes(diff)) {
+          score -= 1;
+          $score.textContent = `패배! 점수 : ${score}`;
+        } else {
+          $score.textContent = `무승부! 점수 : ${score}`;
+        }
+      
+        setTimeout(() => {
+          clickable = true;
+          intervalId = setInterval(changeImage, 50);
+        }, 1000)
+      }
+    }
+
+    $rock.addEventListener('click', clickButton);
+    $scissors.addEventListener('click', clickButton);
+    $paper.addEventListener('click', clickButton);
+  </script>
+</body>
+</html>
