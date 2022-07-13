@@ -42,6 +42,7 @@
     let myScore;
     let comScore;
     let score = 0;
+    let cScore = 0;
     function changeImage() {
       if(computerRSP === 'scissors') {
         computerRSP = 'rock';
@@ -72,20 +73,28 @@
         diff = myScore - comScore;
 
         if([2,-1].includes(diff)) {
+          cScore -= 1;
           score += 1;
           $score.textContent = `승리! 점수 : ${score}`;
           
         } else if ([1,-2].includes(diff)) {
+          cScore += 1;
           score -= 1;
           $score.textContent = `패배! 점수 : ${score}`;
         } else {
           $score.textContent = `무승부! 점수 : ${score}`;
         }
-      
-        setTimeout(() => {
-          clickable = true;
-          intervalId = setInterval(changeImage, 50);
-        }, 1000)
+        
+        if(score >= 3) {
+          $score.textContent = `플레이어 승리!`;
+        } else if(cScore >= 3) {
+          $score.textContent = `컴퓨터의 승리!`;
+        } else{
+          setTimeout(() => {
+            clickable = true;
+            intervalId = setInterval(changeImage, 50);
+          }, 1000)
+        }
       }
     }
 

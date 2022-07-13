@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>반응속도</title>
+<style>
+  #screen {
+    width: 300px;
+    height: 200px;
+    text-align: center;
+    user-select: none;
+  }
+  #screen.waiting {
+    background-color: aqua;
+  }
+  #screen.ready {
+    background-color: red;
+    color: white;
+  }
+  #screen.now {
+    background-color: greenyellow;
+  }
+</style>
+</head>
+
+<body>
+<div id="screen" class="waiting">클릭해서 시작하세요</div>
+<div id="result"></div>
+<script>
+  const $screen = document.querySelector('#screen');
+  const $result = document.querySelector('#result');
+  let startTime;
+  let endTime;
+  let timeoutId;
+  let records = [];
+  let p;
+
+  $screen.addEventListener('click' , () => {
+    if($screen.classList.contains('waiting')) {
+      $screen.classList.replace('waiting','ready');
+      $screen.textContent = '준비하세요!';
+      timeoutId = setTimeout(() => {
+        startTime = new Date();
+        $screen.classList.replace('ready','now');
+        $screen.textContent = '클릭하세요!';
+      }, 2000 + Math.floor(Math.random() * 1000))
+    } else if($screen.classList.contains('ready')) {
+      clearTimeout(timeoutId);
+      $screen.textContent = `성급하셨군요!`;
+      $screen.classList.replace('ready','waiting');
+    } else if($screen.classList.contains('now')) {
+      endTime = new Date();
+      diff = endTime - startTime;
+      records.push(diff);
+      p = records.reduce((a,c) => a + c)/records.length;
+      topfive = records.sort((a,b) => a-b,).slice(0,5);
+      $result.textContent = null;
+      topfive.forEach((ele, i) => {
+        $result.append(`${i+1}위 : ${ele}ms`, document.createElement('br'));
+      });
+      $result.append(`평균: ${p}ms`, document.createElement('br'));
+      $screen.classList.replace('now','waiting');
+      $screen.textContent = '클릭해서 시작하세요';
+    }
+  })
+</script>
+</body>
+</html>
