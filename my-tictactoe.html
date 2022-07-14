@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>틱택토</title>
+<style>
+  table {
+    border-collapse: collapse;
+  }
+
+  td {
+    border: 1px solid black;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+  }
+</style>
+</head>
+
+<body>
+  <script>
+
+    const { body } = document;
+    $table = document.createElement('table');
+    $result = document.createElement('div');
+    let rows = [];
+    let turn = 'O';
+    let clickable = true;
+    
+    function decision(event) {
+      if(hasWinner(event.target)) {
+        $result.textContent = `${turn} 승리!`
+        $table.removeEventListener('click', callback);
+        return;
+      }
+
+      draw = false;
+      draw = rows.flat().every((ele) => ele.textContent);
+      if(draw) {
+        $result.textContent = `무승부!`
+        $table.removeEventListener('click', callback);
+        return;
+      }
+    }
+    function hasWinner(target) {
+      row = target.parentNode.rowIndex;
+      cell = target.cellIndex;
+      
+      let isWinner = false;
+
+      if(rows[row][0].textContent === turn &&
+      rows[row][1].textContent === turn &&
+      rows[row][2].textContent === turn) {
+        isWinner = true;
+      }
+
+      if(rows[0][cell].textContent === turn &&
+      rows[1][cell].textContent === turn &&
+      rows[2][cell].textContent === turn) {
+        isWinner = true;
+      }
+
+      if(rows[0][0].textContent === turn &&
+      rows[1][1].textContent === turn &&
+      rows[2][2].textContent === turn) {
+        isWinner = true;
+      }
+
+      if(rows[0][2].textContent === turn &&
+      rows[1][1].textContent === turn &&
+      rows[2][0].textContent === turn) {
+        isWinner = true;
+      }
+
+      return isWinner      
+    }
+
+    function callback(event) {
+      if(clickable === false) {
+        return;
+      }
+
+      if(event.target.textContent)
+      {
+        return;
+      }
+      event.target.textContent = turn;
+      decision(event)
+      turn = (turn === 'O' ? 'X' : 'O');
+
+      clickable = false;
+      setTimeout(() => {
+        clickable = true;
+        const emptyCells = rows.flat().filter((ele) => !ele.textContent);
+        const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+        randomCell.textContent = 'X';
+        decision(event);
+      }, 2000);
+
+      turn = (turn === 'O' ? 'X' : 'O');
+    }
+
+    for(let i = 0 ; i < 3 ; i++) {
+      let $tr = document.createElement('tr');
+      let row = [];
+      for(let j = 0 ; j < 3 ; j++) {
+        let $td = document.createElement('td');
+        $tr.append($td);
+        row.push($td);
+      }
+      $table.append($tr);
+      rows.push(row);
+    }
+
+    body.append($table);
+    body.append($result);
+
+    $table.addEventListener('click', callback)
+  </script>
+</body>
+</html>
