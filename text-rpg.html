@@ -158,6 +158,19 @@
         }
       }
 
+      updateMonsterStat() {
+        const { monster } = this;
+        if (monster === null) {
+          $monsterName.textContent = '';
+          $monsterHp.textContent = '';
+          $monsterAtt.textContent = '';
+          return;
+        }
+        $monsterName.textContent = monster.name;
+        $monsterHp.textContent = `HP: ${monster.hp}/${monster.maxHp}`;
+        $monsterAtt.textContent = `ATT: ${monster.att}`;
+      }
+
       updateHeroStat() {
         const { hero } = this;
         if (hero === null) {
