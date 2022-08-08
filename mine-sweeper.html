@@ -6,6 +6,7 @@
     table { border-collapse: collapse; }
     td {
       border: 1px solid #bbb;
+      font-size: 15px;
       text-align: center;
       line-height: 20px;
       width: 20px;
@@ -32,13 +33,13 @@
   </table>
   <div id="result"></div>
   <script>
-    const $form = document.querySelector('#timer');
+    const $form = document.querySelector('#form');
     const $timer = document.querySelector('#timer');
     const $tbody = document.querySelector('#table tbody');
     const $result = document.querySelector('#result');
-    const row = 10;
-    const cell = 10;
-    const mine = 10;
+    let row;
+    let cell;
+    let mine;
     const CODE = {
       NORMAL: -1, // 닫힌 칸 (지뢰 없음)
       QUESTION: -2,
@@ -49,18 +50,18 @@
       OPENED: 0,  // 0 이상이면 다 모두 열린 칸
     }
     let data;
-    let openCount= 0;
-    let startTime = new Date();
-    const interval = setInterval(() => {
-      const time = Math.floor((new Date() - startTime) / 1000);
-      $timer.textContent = `${time}초`;
-    }, 1000);
+    let openCount;
+    let startTime
+    let interval
 
     function onSubmit(event) {
       event.preventDefault();
       row = parseInt(event.target.row.value);
       cell = parseInt(event.target.cell.value);
       mine = parseInt(event.target.mine.value);
+      openCount = 0;
+      clearInterval(interval);
+      $tbody.innerHTML = '';
       drawTable();
       startTime = new Date();
       interval = setInterval(() => {
@@ -70,6 +71,16 @@
     }
     $form. addEventListener('submit', onSubmit);
     
+    function showMines() {
+      const mines = [CODE.MINE, CODE.QUESTION_MINE, CODE.FLAG_MINE];
+      data.forEach((row, rowIndex) => {
+        row.forEach((cell, cellIndex) => {
+          if (mines.includes(cell)) {
+            $tbody.children[rowIndex].children[cellIndex].textContent = 'X';
+          }
+        })
+      })
+    }
     function plantMine() {
       const candidate = Array(row * cell).fill().map((arr, i) => { return i;});
       const shuffle = [];
@@ -110,7 +121,7 @@
       } else if (cellData === CODE.FLAG_MINE) {
         data[rowIndex][cellIndex] = CODE.MINE;
         target.className = '';
-        target.textContent = 'X';
+        // target.textContent = 'X'; // 개발편의를 위해
       } else if (cellData === CODE.NORMAL) {
         data[rowIndex][cellIndex] = CODE.QUESTION;
         target.className = 'question';
@@ -188,6 +199,7 @@
         // data[rowIndex][cellIndex] = count;
         openAround(rowIndex, cellIndex);
       } else if (cellData === CODE.MINE) {
+        showMines();
         target.textContent = '펑';
         target.className = 'opened';
         $tbody.removeEventListener('contextmenu', onRightClick);
@@ -202,7 +214,7 @@
         row.forEach((cell) => {
           const $td = document.createElement('td');
           if (cell === CODE.MINE) {
-            $td.textContent = 'X';   // 개발 편의를 위하여 
+            // $td.textContent = 'X';   // 개발 편의를 위하여 
           }
           $tr.append($td);
         });
@@ -211,7 +223,6 @@
         $tbody.addEventListener('click', onLeftClick);
       })
     }
-    drawTable();
   </script>
 </body>
 </html>
