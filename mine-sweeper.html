@@ -201,7 +201,6 @@
       } else if (cellData === CODE.MINE) {
         showMines();
         target.textContent = '펑';
-        target.className = 'opened';
         $tbody.removeEventListener('contextmenu', onRightClick);
         $tbody.removeEventListener('click', onLeftClick);
         clearInterval(interval);
