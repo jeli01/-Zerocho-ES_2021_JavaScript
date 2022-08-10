@@ -17,6 +17,7 @@
     }
     .dead {
       background: url('./dead_gopher.png') center center no-repeat;
+      background-size: 200px 200px;
     }
     .bomb {
       background: url('./bomb.png') center center no-repeat;
@@ -45,6 +46,7 @@
   <div>
   <span id="timer">0</span>초&nbsp;
   <span id="score">0</span>점
+  <span id="life">3</span>목숨
   <button id="start">시작</button>
   </div>
   <div id="game">
@@ -69,7 +71,7 @@
       </div>
       </div>
         <div class="row">
-        <div class="cell">
+        <div class="cell">  
         <div class="hole"></div>
         <div class="gopher hidden"></div>
         <div class="bomb hidden"></div>
@@ -115,16 +117,19 @@
     const $game = document.querySelector('#game');
     const $start = document.querySelector('#start');
     const $$cells = document.querySelectorAll('.cell');
-
+    const $life = document.querySelector('#life');
     const holes = [0, 0, 0, 0, 0, 0, 0, 0, 0];
     let started = false;
     let score = 0;
     let time = 60;
+    let life = 3;
+    let timerId;
+    let tickId;
 
     $start.addEventListener('click', () => {
       if (started) return; // 이미 시작했으면 무시
       started = true;
-      const timerId = setInterval(() => {
+      timerId = setInterval(() => {
         time = (time * 10 - 1) / 10;
         $timer.textContent = time;
         if (time === 0) {
@@ -135,7 +140,7 @@
           }, 50);
         }
       }, 100);
-      const tickId = setInterval(tick, 1000);
+      tickId = setInterval(tick, 1000);
       tick();
     });
 
@@ -185,6 +190,15 @@
           holes[index] = 0;
           event.target.classList.remove('boom');
         }, 1000);
+        life--;
+        $life.textContent = life;
+        if (life === 0) {
+          setTimeout(() => {
+            clearInterval(timerId);
+            clearInterval(tickId);
+            alert(`게임 오버! 점수는${score}점`);
+          }, 50);
+        }
       });
     });
 
